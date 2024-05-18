@@ -1,0 +1,32 @@
+# Workspce
+.vscode
+
+# Client && Dashboard
+dist/
+
+# dotnet
+appsettings.*
+
+# dotnet
+obj
+bin
+wwwroot
+publish
+
+# db
+*.db-shm
+*.db-wal
+*.db
+Migrations/
+*.yml
+
+# Logs
+Logs/
+
+# DefaultData
+users.json
+
+# mac
+.DS_Store
+abonds-web.service
+API/*.json
