@@ -14,10 +14,10 @@ wwwroot
 publish
 
 # db
-*.db-shm
-*.db-wal
-*.db
-Migrations/
+# *.db-shm
+# *.db-wal
+# *.db
+# Migrations/
 *.yml
 
 # Logs

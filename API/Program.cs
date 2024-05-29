@@ -1,9 +1,30 @@
+using API.Data;
+using API.Extensions;
+using API.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Loger
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom
+    .Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Services.AddControllers().AddNewtonsoftJson(x =>
+    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); ;
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDBConnection(builder.Configuration);
+
+// Use Serilog
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
@@ -14,31 +35,27 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// UseSaticFiles
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Use Controller instead of minimalApi
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+var context = services.GetRequiredService<DatabaseContext>();
+var userManager = services.GetRequiredService<UserManager<UserModel>>();
+var logger = services.GetRequiredService<ILogger<Program>>();
+try
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    await context.Database.MigrateAsync();
+    await AppIdentityDbContextSeed.SeedUserAsync(userManager);
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "An error occured during migration");
+}
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
