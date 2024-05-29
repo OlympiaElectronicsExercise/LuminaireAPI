@@ -22,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDBConnection(builder.Configuration);
+builder.Services.AddServices();
 
 builder.Services.AddIdentityServiceExtensions(builder.Configuration);
 
