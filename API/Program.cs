@@ -23,6 +23,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDBConnection(builder.Configuration);
 
+builder.Services.AddIdentityServiceExtensions(builder.Configuration);
+
 // Use Serilog
 builder.Host.UseSerilog();
 
@@ -37,6 +39,10 @@ if (app.Environment.IsDevelopment())
 
 // UseSaticFiles
 app.UseStaticFiles();
+
+// JWT Auth
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
