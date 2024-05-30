@@ -75,7 +75,7 @@ namespace API.Controllers.Auth
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /Auth/login
+        ///     POST /Auth/register
         ///     {
         ///        "email": "example@example.com",
         ///        "password": "Aa123456!"
@@ -85,33 +85,32 @@ namespace API.Controllers.Auth
         /// <response code="200">Returns UserDto (successfully logedIn)</response>
         /// <response code="401">Unauthorized user (wrong password)</response>
         /// <response code="404">If the user not found</response>
+        [AllowAnonymous]
+        [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UserDto>> Register(LoginDto val)
+        {
+            if (await UserExistsAsync(val.Email!.ToLower())) return BadRequest("User already exists");
 
-    [AllowAnonymous]
-    [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserDto>> Register(LoginDto val)
-    {
-    if (await UserExistsAsync(val.Email!.ToLower())) return BadRequest("User already exists");
+            var user = new UserModel
+            {
+                Email = val.Email,
+                UserName = val.Email
+            };
 
-    var user = new UserModel
-    {
-    Email = val.Email,
-    UserName = val.Email
-    };
+            await _userManager.CreateAsync(user, val.Password!);
 
-    await _userManager.CreateAsync(user, val.Password!);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, val.Password!, false);
 
-    var result = await _signInManager.CheckPasswordSignInAsync(user, val.Password!, false);
+            if (result.Succeeded) _logger.LogInformation($"User: {user.Email} logged in successfully");
 
-    if (result.Succeeded) _logger.LogInformation($"User: {user.Email} logged in successfully");
-
-    return new UserDto
-    {
-    Email = user.Email,
-    Token = await _tokenService.CreateToken(user),
-    };
-    }
+            return new UserDto
+            {
+                Email = user.Email,
+                Token = await _tokenService.CreateToken(user),
+            };
+        }
 
         // Check of user exists
         private async Task<bool> UserExistsAsync(string email)

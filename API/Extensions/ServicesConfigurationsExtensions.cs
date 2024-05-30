@@ -7,8 +7,11 @@ namespace API.Extensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ITokenService, TokenService>(); 
+            // services.AddTransient<ITokenService, TokenService>();
+            // services.AddSingleton<ITokenService, TokenService>();
             return services;
         }
     }
+
 }

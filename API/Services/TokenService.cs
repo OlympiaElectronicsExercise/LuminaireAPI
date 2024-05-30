@@ -12,10 +12,12 @@ namespace API.Services
     {
         private readonly UserManager<UserModel> _userManager;
         private readonly SymmetricSecurityKey _key;
+
+        // Constructor
         public TokenService(IConfiguration config, UserManager<UserModel> userManager)
         {
             _userManager = userManager;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));
+            _key = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(config["TokenKey"]!));
         }
 
         public async Task<string> CreateToken(UserModel user)
@@ -24,6 +26,7 @@ namespace API.Services
             {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Email!),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!),
+                // new Claim(JwtRegisteredClaimNames.Typ, "Admin")
             };
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -35,7 +38,7 @@ namespace API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds
             };
 
