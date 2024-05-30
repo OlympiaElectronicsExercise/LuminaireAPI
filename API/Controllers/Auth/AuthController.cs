@@ -4,6 +4,7 @@ using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers.Auth
@@ -113,6 +114,96 @@ namespace API.Controllers.Auth
                 Token = await _tokenService.CreateToken(user),
             };
         }
+
+        /// <summary>
+        /// Forgot password request
+        /// </summary>
+        /// <param name="forgotPassword" example="Email and CLientURI">ForgotPasswordDto</param>
+        /// <returns>string</returns>
+        /// <response code="200">Forgot password request has been successfully sent</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Auth/forgot-password
+        ///     {
+        ///        "email": "example@example.com",
+        ///        "clientUri": "https://example.com/auth/forgot-password"
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="404">User doesn't exist</response>
+        [AllowAnonymous]
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPassword)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var user = await _userManager.FindByEmailAsync(forgotPassword.Email!);
+
+            if (user is null) return NotFound("User doesn't exist");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var param = new Dictionary<string, string>
+            {
+                { "token", token },
+                { "email", forgotPassword.Email! }
+            };
+
+            var callback = QueryHelpers.AddQueryString(forgotPassword.ClientURI!, param!);
+            var message = new MessageModel(new string[] { user.Email! }, "Reset Password token", callback);
+
+            await _emailSender.SendEmailAsync(message);
+
+            return Ok("Forgot password request has been successfully sent.");
+        }
+
+
+        /// <summary>
+        /// Reset Password
+        /// </summary>
+        /// <param name="resetPassword" example="Email, Password, ConfirmPassword, Token">ResetPasswordDto</param>
+        /// <returns>UserDto</returns>
+        /// <response code="200">Password reseted successfully</response>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Auth/reset-password
+        ///     {
+        ///        "email": "example@example.com",
+        ///        "password": "A123456b!",
+        ///        "confirmPassword": "A123456b!",
+        ///        "token": "some token"
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="404">User not found</response>
+        /// <response code="400">An error occured while reseting the password</response>
+        [AllowAnonymous]
+        [HttpPost("reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPassword)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var user = await _userManager.FindByEmailAsync(resetPassword.Email!);
+
+            if (user is null) return NotFound("User does not exist");
+
+            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, resetPassword.Token!, resetPassword.Password!);
+
+            if (!resetPasswordResult.Succeeded)
+            {
+                var errors = resetPasswordResult.Errors.Select(e => e.Description);
+                return BadRequest(new { Errors = errors });
+            }
+
+            return Ok("Password reseted successfully");
+        }
+
 
         // Check of user exists
         private async Task<bool> UserExistsAsync(string email)
