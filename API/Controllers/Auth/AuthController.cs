@@ -14,8 +14,10 @@ namespace API.Controllers.Auth
         private readonly UserManager<UserModel> _userManager;
         private readonly SignInManager<UserModel> _signInManager;
         private readonly ITokenService _tokenService;
-        public AuthController(ILogger<AuthController> logger, UserManager<UserModel> userManager, SignInManager<UserModel> signInManager, ITokenService tokenService)
+        private readonly IEmailSender _emailSender;
+        public AuthController(ILogger<AuthController> logger, UserManager<UserModel> userManager, SignInManager<UserModel> signInManager, ITokenService tokenService, IEmailSender emailSender)
         {
+            _emailSender = emailSender;
             _tokenService = tokenService;
             _signInManager = signInManager;
             _userManager = userManager;
