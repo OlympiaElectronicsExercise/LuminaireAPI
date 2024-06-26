@@ -13,7 +13,7 @@ namespace API.Data
             
         }
 
-        // public DbSet<LuminareModel> Luminaires { get; set; }
+        public DbSet<LuminareModel> Luminaires { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

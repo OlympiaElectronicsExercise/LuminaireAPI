@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace API.Data.Migraitons
+namespace API.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240529121005_InitialCreate")]
+    [Migration("20240626173635_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -19,6 +19,154 @@ namespace API.Data.Migraitons
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
+
+            modelBuilder.Entity("API.Models.LuminareModel", b =>
+                {
+                    b.Property<int>("UID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("Address")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Autonomy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("BatteryCapacityFault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("BatteryCharging")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("BatteryCutOffStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("BatteryFault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("BatteryTestRunning")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BatteryVoltage")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ChargeCurrent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("ChargerFault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DimmingLevel")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("FullyCharged")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("HasWrongLuminaireType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("HopCounter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("InForcedEmergency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LampCurrent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("LampFault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("LampTestMade")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("LampTestRunning")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("LatencyCounter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LuminaryModel")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("MainsFault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("Maintained")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("MessageCounter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ModuleType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModuleVersion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("NetworkLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("NetworkidToGo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Rc1181fwVersion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte>("ResolvedSpiCommError")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("Rfchannel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RfchannelToGo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Rssi")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RssiWithUnit")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("SidToGo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte>("SpiCommError")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TimeToSend")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdateOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Zone")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UID");
+
+                    b.HasIndex("Address")
+                        .IsUnique();
+
+                    b.ToTable("Luminaires");
+                });
 
             modelBuilder.Entity("API.Models.RoleModel", b =>
                 {

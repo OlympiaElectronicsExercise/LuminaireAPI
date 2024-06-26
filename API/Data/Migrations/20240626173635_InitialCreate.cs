@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace API.Data.Migraitons
+namespace API.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -50,6 +50,59 @@ namespace API.Data.Migraitons
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Luminaires",
+                columns: table => new
+                {
+                    UID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Address = table.Column<long>(type: "INTEGER", nullable: false),
+                    Maintained = table.Column<byte>(type: "INTEGER", nullable: false),
+                    BatteryCharging = table.Column<byte>(type: "INTEGER", nullable: false),
+                    BatteryTestRunning = table.Column<byte>(type: "INTEGER", nullable: false),
+                    LampTestRunning = table.Column<byte>(type: "INTEGER", nullable: false),
+                    BatteryCapacityFault = table.Column<byte>(type: "INTEGER", nullable: false),
+                    LampFault = table.Column<byte>(type: "INTEGER", nullable: false),
+                    ChargerFault = table.Column<byte>(type: "INTEGER", nullable: false),
+                    MainsFault = table.Column<byte>(type: "INTEGER", nullable: false),
+                    BatteryVoltage = table.Column<string>(type: "TEXT", nullable: false),
+                    ChargeCurrent = table.Column<string>(type: "TEXT", nullable: false),
+                    LampCurrent = table.Column<string>(type: "TEXT", nullable: false),
+                    Autonomy = table.Column<string>(type: "TEXT", nullable: false),
+                    Version = table.Column<string>(type: "TEXT", nullable: false),
+                    LuminaryModel = table.Column<string>(type: "TEXT", nullable: false),
+                    BatteryFault = table.Column<byte>(type: "INTEGER", nullable: false),
+                    BatteryCutOffStatus = table.Column<byte>(type: "INTEGER", nullable: false),
+                    SpiCommError = table.Column<byte>(type: "INTEGER", nullable: false),
+                    ResolvedSpiCommError = table.Column<byte>(type: "INTEGER", nullable: false),
+                    ModuleVersion = table.Column<string>(type: "TEXT", nullable: false),
+                    ModuleType = table.Column<int>(type: "INTEGER", nullable: false),
+                    TimeToSend = table.Column<string>(type: "TEXT", nullable: false),
+                    HasWrongLuminaireType = table.Column<byte>(type: "INTEGER", nullable: false),
+                    FullyCharged = table.Column<byte>(type: "INTEGER", nullable: false),
+                    Rfchannel = table.Column<long>(type: "INTEGER", nullable: false),
+                    LampTestMade = table.Column<byte>(type: "INTEGER", nullable: false),
+                    DimmingLevel = table.Column<string>(type: "TEXT", nullable: false),
+                    Zone = table.Column<int>(type: "INTEGER", nullable: false),
+                    SidToGo = table.Column<long>(type: "INTEGER", nullable: false),
+                    NetworkidToGo = table.Column<long>(type: "INTEGER", nullable: false),
+                    RfchannelToGo = table.Column<int>(type: "INTEGER", nullable: false),
+                    InForcedEmergency = table.Column<byte>(type: "INTEGER", nullable: false),
+                    Rssi = table.Column<int>(type: "INTEGER", nullable: false),
+                    RssiWithUnit = table.Column<string>(type: "TEXT", nullable: false),
+                    NetworkLevel = table.Column<long>(type: "INTEGER", nullable: false),
+                    HopCounter = table.Column<long>(type: "INTEGER", nullable: false),
+                    MessageCounter = table.Column<long>(type: "INTEGER", nullable: false),
+                    LatencyCounter = table.Column<long>(type: "INTEGER", nullable: false),
+                    Rc1181fwVersion = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdateOn = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Luminaires", x => x.UID);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,6 +247,12 @@ namespace API.Data.Migraitons
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Luminaires_Address",
+                table: "Luminaires",
+                column: "Address",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -213,6 +272,9 @@ namespace API.Data.Migraitons
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Luminaires");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
