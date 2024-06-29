@@ -30,3 +30,5 @@ users.json
 .DS_Store
 abonds-web.service
 API/*.json
+/.vs
+/API/API.csproj.user
