@@ -1,14 +1,15 @@
 using API.Interfaces;
 using API.Models;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace API.Services
 {
     public class EmailSender : IEmailSender
     {
-        private readonly EmailConfigurationModel _emailConfiguration;
-        public EmailSender(EmailConfigurationModel emailConfiguration)
+        private readonly IOptions<EmailConfigurationModel> _emailConfiguration;
+        public EmailSender(IOptions<EmailConfigurationModel> emailConfiguration)
         {
             _emailConfiguration = emailConfiguration;
         }
@@ -23,7 +24,7 @@ namespace API.Services
         private MimeMessage CreateEmailMessage(MessageModel message)
         {
             var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress(_emailConfiguration.SenderName!, _emailConfiguration.From!));
+            emailMessage.From.Add(new MailboxAddress(_emailConfiguration.Value.SenderName!, _emailConfiguration.Value.From!));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
@@ -38,9 +39,9 @@ namespace API.Services
             {
                 try
                 {
-                    await client.ConnectAsync(_emailConfiguration.SmtpServer, _emailConfiguration.Port, _emailConfiguration.EnableSsl);
+                    await client.ConnectAsync(_emailConfiguration.Value.SmtpServer, _emailConfiguration.Value.Port, _emailConfiguration.Value.EnableSsl);
                     // client.AuthenticationMechanisms.Remove("XOAUTH2");
-                    await client.AuthenticateAsync(_emailConfiguration.Username, _emailConfiguration.Password);
+                    await client.AuthenticateAsync(_emailConfiguration.Value.Username, _emailConfiguration.Value.Password);
 
                     await client.SendAsync(message);
                 }
