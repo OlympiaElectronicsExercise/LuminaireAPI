@@ -32,5 +32,3 @@ abonds-web.service
 API/*.json
 /.vs
 /API/API.csproj.user
-/API/luminaire.db-shm
-/API/luminaire.db-wal
